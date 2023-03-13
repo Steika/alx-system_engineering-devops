@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# read the input log file into an array
+mapfile -t lines < "$1"
+
+# extract the host or IP address from each line and count the occurrences
+declare -A counts
+for line in "${lines[@]}"; do
+    host=$(echo "$line" | cut -f1)
+    (( counts[$host]++ ))
+done
+
+# sort the hosts by number of occurrences and display the top 11
+printf "%s\t%s\n" "Host" "Requests"
+for host in "${!counts[@]}"; do
+    printf "%s\t%s\n" "$host" "${counts[$host]}"
+done | sort -k2nr | head -n11
